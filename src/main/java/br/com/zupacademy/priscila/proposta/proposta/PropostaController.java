@@ -1,6 +1,10 @@
 package br.com.zupacademy.priscila.proposta.proposta;
 
+import br.com.zupacademy.priscila.proposta.util.validation.ProibeNovaPropostaParaMesmoDocumentoValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,10 +19,15 @@ import java.net.URI;
 @RequestMapping("/propostas")
 public class PropostaController {
 
+    @Autowired
     private PropostaRepository repository;
 
-    public PropostaController(PropostaRepository repository) {
-        this.repository = repository;
+    @Autowired
+    private ProibeNovaPropostaParaMesmoDocumentoValidator validator;
+
+    @InitBinder
+    public void init(WebDataBinder binder){
+        binder.addValidators(validator);
     }
 
     @PostMapping

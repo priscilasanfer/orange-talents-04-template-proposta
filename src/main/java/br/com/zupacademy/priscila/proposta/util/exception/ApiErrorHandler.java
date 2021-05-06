@@ -40,4 +40,13 @@ public class ApiErrorHandler {
 
         return errors;
     }
+
+    @ResponseStatus(code = HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(PropostaException.class)
+    public List<ApiErrorResponse> handlePropostaException(PropostaException e){
+        List<ApiErrorResponse> errors = new ArrayList<>();
+        errors.add(new ApiErrorResponse("documento", e.getMessage()));
+        return errors;
+    }
+
 }
