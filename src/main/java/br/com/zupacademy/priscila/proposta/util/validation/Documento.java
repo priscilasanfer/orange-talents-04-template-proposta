@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 @ReportAsSingleViolation
 @ConstraintComposition(CompositionType.OR)
 public @interface Documento {
-    String message() default "Documento com formato inválido";
+    String message() default "{javax.validation.constraints.Documento.messages}";
 
     Class<?>[] groups() default {};
 

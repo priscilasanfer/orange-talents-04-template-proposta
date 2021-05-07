@@ -2,6 +2,8 @@ package br.com.zupacademy.priscila.proposta.proposta;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,6 +31,9 @@ public class Proposta {
     @Column(nullable = false)
     private BigDecimal salario;
 
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.NAO_ANALISADO;
+
     public Proposta(String documento,
                     String email,
                     String nome,
@@ -44,4 +49,17 @@ public class Proposta {
     public Long getId() {
         return id;
     }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setEstadoDaProposta(Status status) {
+        this.status = status;
+    }
+
 }
