@@ -1,5 +1,8 @@
 package br.com.zupacademy.priscila.proposta.proposta;
 
+import br.com.zupacademy.priscila.proposta.proposta.cartao.Cartao;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -7,6 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import java.math.BigDecimal;
 
 @Entity
@@ -33,6 +38,13 @@ public class Proposta {
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.NAO_ANALISADO;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cartao_id", referencedColumnName = "numero")
+    private Cartao cartao;
+
+    @Deprecated
+    public Proposta() {}
 
     public Proposta(String documento,
                     String email,
@@ -62,4 +74,7 @@ public class Proposta {
         this.status = status;
     }
 
+    public void setCartao(Cartao cartao) {
+        this.cartao = cartao;
+    }
 }

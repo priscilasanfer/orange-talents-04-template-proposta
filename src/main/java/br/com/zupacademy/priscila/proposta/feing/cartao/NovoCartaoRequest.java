@@ -1,14 +1,14 @@
-package br.com.zupacademy.priscila.proposta.analise;
+package br.com.zupacademy.priscila.proposta.feing.cartao;
 
 import br.com.zupacademy.priscila.proposta.proposta.Proposta;
 
-public class AnaliseFinanceiraRequest {
+public class NovoCartaoRequest {
 
     private String documento;
     private String nome;
-    private String idProposta;
+    private String  idProposta;
 
-    public AnaliseFinanceiraRequest(Proposta proposta) {
+    public NovoCartaoRequest(Proposta proposta) {
         this.documento = proposta.getDocumento();
         this.nome = proposta.getNome();
         this.idProposta = proposta.getId().toString();

@@ -1,4 +1,4 @@
-package br.com.zupacademy.priscila.proposta.analise;
+package br.com.zupacademy.priscila.proposta.feing.analise;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;

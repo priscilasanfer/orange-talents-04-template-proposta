@@ -1,4 +1,4 @@
-package br.com.zupacademy.priscila.proposta.analise;
+package br.com.zupacademy.priscila.proposta.feing.analise;
 
 public class AnaliseFinanceiraResponse {
 

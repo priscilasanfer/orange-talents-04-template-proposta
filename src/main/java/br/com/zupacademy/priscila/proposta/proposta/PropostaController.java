@@ -1,13 +1,15 @@
 package br.com.zupacademy.priscila.proposta.proposta;
 
-import br.com.zupacademy.priscila.proposta.analise.AnaliseFinanceiraClient;
-import br.com.zupacademy.priscila.proposta.analise.AnaliseFinanceiraRequest;
+import br.com.zupacademy.priscila.proposta.feing.analise.AnaliseFinanceiraClient;
+import br.com.zupacademy.priscila.proposta.feing.analise.AnaliseFinanceiraRequest;
+import br.com.zupacademy.priscila.proposta.events.PropostaElegivelEvent;
 import br.com.zupacademy.priscila.proposta.util.ExecutorTransacao;
 import br.com.zupacademy.priscila.proposta.util.exception.ErroPadronizado;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +37,9 @@ public class PropostaController {
 
     @Autowired
     private ExecutorTransacao executor;
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody @Valid NovaPropostaRequest request,
@@ -66,6 +71,7 @@ public class PropostaController {
             logger.info("Enviando proposta {} para analise financeira", proposta.getId());
             analiseFinanceiraClient.consulta(new AnaliseFinanceiraRequest(proposta));
             status = Status.ELEGIVEL;
+            publisher.publishEvent(new PropostaElegivelEvent(proposta));
         }catch (FeignException.UnprocessableEntity e){
             logger.error("Proposta numero {} com restrição financeira.", proposta.getId());
             status = Status.NAO_ELEGIVEL;
