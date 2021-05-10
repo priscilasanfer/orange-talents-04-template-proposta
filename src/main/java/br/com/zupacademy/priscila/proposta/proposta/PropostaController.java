@@ -1,8 +1,8 @@
 package br.com.zupacademy.priscila.proposta.proposta;
 
+import br.com.zupacademy.priscila.proposta.events.PropostaElegivelEvent;
 import br.com.zupacademy.priscila.proposta.feing.analise.AnaliseFinanceiraClient;
 import br.com.zupacademy.priscila.proposta.feing.analise.AnaliseFinanceiraRequest;
-import br.com.zupacademy.priscila.proposta.events.PropostaElegivelEvent;
 import br.com.zupacademy.priscila.proposta.util.ExecutorTransacao;
 import br.com.zupacademy.priscila.proposta.util.exception.ErroPadronizado;
 import feign.FeignException;
@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/propostas")
@@ -63,6 +66,19 @@ public class PropostaController {
             logger.info("Proposta criada para documento: {}", request.getDocumento());
             return ResponseEntity.created(uri).build();
         }
+    }
+
+    @GetMapping("/{uuid}")
+    public ResponseEntity<?> detalhar (@PathVariable String uuid){
+        Optional<Proposta> proposta = repository.findByCodigo(uuid);
+
+        if (proposta.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErroPadronizado(List.of("Proposta não encontrada")));
+        }
+
+        return ResponseEntity.ok(new DetalhePropostaResponse(proposta.get()));
+
     }
 
     public void consultaFinanceira(Proposta proposta){
