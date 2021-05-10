@@ -13,7 +13,7 @@ import java.util.TimeZone;
 @EnableFeignClients
 @EnableJpaRepositories(enableDefaultTransactions = false)
 @EnableScheduling
-//@EnableAsync
+@EnableAsync
 public class PropostaApplication {
 
 	public static void main(String[] args) {
