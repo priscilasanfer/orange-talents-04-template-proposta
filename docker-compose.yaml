@@ -1,6 +1,36 @@
 version: '3'
 services:
 
+  proposta:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: priscilasanfer/proposta
+    restart: on-failure
+    container_name: proposta
+    ports:
+    - "8080:8080"
+    depends_on:
+      - mysql
+      - analise
+      - contas
+    environment:
+      DATABASE_URL: jdbc:mysql://mysql:3306/proposta?createDatabaseIfNotExist=true&serverTimezone=UTC
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: root
+      API_ANALISE_URL: http://analise:9999
+      API_CONTAS_URL: http://contas:8888
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - volume-mysql:/var/lib/mysql
+    ports:
+      - 3308:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: proposta
+
   zookeeper:
     image: "confluentinc/cp-zookeeper:5.2.1"
     environment:
@@ -138,3 +168,4 @@ volumes:
   grafana-volume:
   prometheus-volume:
   postgres-volume:
+  volume-mysql:
