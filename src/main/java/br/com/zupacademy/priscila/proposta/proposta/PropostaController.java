@@ -1,6 +1,5 @@
 package br.com.zupacademy.priscila.proposta.proposta;
 
-import br.com.zupacademy.priscila.proposta.events.PropostaElegivelEvent;
 import br.com.zupacademy.priscila.proposta.feing.analise.AnaliseFinanceiraClient;
 import br.com.zupacademy.priscila.proposta.feing.analise.AnaliseFinanceiraRequest;
 import br.com.zupacademy.priscila.proposta.util.ExecutorTransacao;
@@ -47,21 +46,15 @@ public class PropostaController {
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody @Valid NovaPropostaRequest request,
                                     UriComponentsBuilder uriBuilder){
-
         if(jaExistePropostaParaEsseDocumento(request.getDocumento())) {
             logger.info("Já existe uma proposta para o documento: {}", request.getDocumento());
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                     .body(new ErroPadronizado(List.of("Já Existe uma proposta para esse CPF / CNPJ")));
         } else{
-
             Proposta novaProposta = request.toModel();
-
-             executor.salvaEComita(novaProposta);
-
+            executor.salvaEComita(novaProposta);
             consultaFinanceira(novaProposta);
-
             executor.atualizaEComita(novaProposta);
-
             URI uri = uriBuilder.path("/propostas/{id}").buildAndExpand(novaProposta.getId()).toUri();
             logger.info("Proposta criada para documento: {}", request.getDocumento());
             return ResponseEntity.created(uri).build();
@@ -71,14 +64,11 @@ public class PropostaController {
     @GetMapping("/{uuid}")
     public ResponseEntity<?> detalhar (@PathVariable String uuid){
         Optional<Proposta> proposta = repository.findByCodigo(uuid);
-
         if (proposta.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErroPadronizado(List.of("Proposta não encontrada")));
         }
-
         return ResponseEntity.ok(new DetalhePropostaResponse(proposta.get()));
-
     }
 
     public void consultaFinanceira(Proposta proposta){
@@ -87,7 +77,6 @@ public class PropostaController {
             logger.info("Enviando proposta {} para analise financeira", proposta.getId());
             analiseFinanceiraClient.consulta(new AnaliseFinanceiraRequest(proposta));
             status = Status.ELEGIVEL;
-            publisher.publishEvent(new PropostaElegivelEvent(proposta));
         }catch (FeignException.UnprocessableEntity e){
             logger.error("Proposta numero {} com restrição financeira.", proposta.getId());
             status = Status.NAO_ELEGIVEL;

@@ -23,7 +23,7 @@ public class PropostasElegiveisSemCartaoScheduler {
     @Autowired
     private ApplicationEventPublisher publisher;
 
-    @Scheduled(cron = "${periodicidade.cron.proposta.sem.cartao}")
+    @Scheduled(fixedRateString = "${periodicidade.proposta.sem.cartao}")
     private void verificaPropostaElegivelSemCartao() {
         logger.info("Job: Verificando se existe propostas elegiveis sem cartão");
         List<Proposta> propostas = repository.findPropostaByStatusAndCartaoNumero(Status.ELEGIVEL, null);
