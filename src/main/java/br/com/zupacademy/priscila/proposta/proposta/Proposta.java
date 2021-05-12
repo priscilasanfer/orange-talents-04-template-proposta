@@ -1,6 +1,6 @@
 package br.com.zupacademy.priscila.proposta.proposta;
 
-import br.com.zupacademy.priscila.proposta.proposta.cartao.Cartao;
+import br.com.zupacademy.priscila.proposta.cartao.Cartao;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

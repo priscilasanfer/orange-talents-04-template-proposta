@@ -1,8 +1,11 @@
-package br.com.zupacademy.priscila.proposta.proposta.cartao;
+package br.com.zupacademy.priscila.proposta.cartao;
 
 import br.com.zupacademy.priscila.proposta.proposta.Proposta;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
@@ -10,6 +13,9 @@ import javax.persistence.OneToOne;
 public class Cartao {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String numero;
 
     @OneToOne(mappedBy = "cartao")
@@ -20,6 +26,10 @@ public class Cartao {
 
     public Cartao(String numero) {
         this.numero = numero;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getNumero() {
