@@ -44,7 +44,7 @@ public class Proposta {
     private Status status = Status.NAO_ANALISADO;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cartao_id", referencedColumnName = "numero")
+    @JoinColumn(name = "cartao_id", referencedColumnName = "id")
     private Cartao cartao;
 
     @Deprecated
