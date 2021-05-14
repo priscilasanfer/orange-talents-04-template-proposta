@@ -7,12 +7,16 @@ public class NovoBloqueioRequest {
     @NotBlank
     private String sistemaResponsavel;
 
-    public String getSistemaResponsavel() {
-        return sistemaResponsavel;
+    @Deprecated
+    public NovoBloqueioRequest() {
     }
 
-    public void setSistemaResponsavel(String sistemaResponsavel) {
+    public NovoBloqueioRequest(String sistemaResponsavel) {
         this.sistemaResponsavel = sistemaResponsavel;
+    }
+
+    public String getSistemaResponsavel() {
+        return sistemaResponsavel;
     }
 
 }

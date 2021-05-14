@@ -1,7 +1,7 @@
 package br.com.zupacademy.priscila.proposta.events;
 
 import br.com.zupacademy.priscila.proposta.cartao.Cartao;
-import br.com.zupacademy.priscila.proposta.feing.cartao.NovoCartaoClient;
+import br.com.zupacademy.priscila.proposta.feing.cartao.CartaoClient;
 import br.com.zupacademy.priscila.proposta.feing.cartao.NovoCartaoResponse;
 import br.com.zupacademy.priscila.proposta.proposta.Proposta;
 import br.com.zupacademy.priscila.proposta.util.ExecutorTransacao;
@@ -18,7 +18,7 @@ public class PropostaElegivelListener {
     private final Logger logger = LoggerFactory.getLogger(PropostaElegivelListener.class);
 
     @Autowired
-    private NovoCartaoClient novoCartaoClient;
+    private CartaoClient cartaoClient;
 
     @Autowired
     private ExecutorTransacao executor;
@@ -29,7 +29,7 @@ public class PropostaElegivelListener {
         Proposta proposta = event.getProposta();
 
         try{
-            NovoCartaoResponse cartao = novoCartaoClient.solicita(proposta.getId());
+            NovoCartaoResponse cartao = cartaoClient.solicita(proposta.getId());
             proposta.setCartao(new Cartao(cartao.getId()));
             logger.info("Novo cartao associado a proposta {}", proposta.getId());
             executor.atualizaEComita(proposta);

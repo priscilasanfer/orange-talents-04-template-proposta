@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(url = "${client.contas.url}", name = "${client.contas.name}")
-public interface NovoCartaoClient {
+public interface CartaoClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/api/cartoes", consumes = "application/json")
     NovoCartaoResponse solicita(@RequestParam("idProposta") Long idProposta);

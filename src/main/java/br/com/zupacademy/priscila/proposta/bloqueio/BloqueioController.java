@@ -3,7 +3,7 @@ package br.com.zupacademy.priscila.proposta.bloqueio;
 import br.com.zupacademy.priscila.proposta.cartao.Cartao;
 import br.com.zupacademy.priscila.proposta.cartao.CartaoRepository;
 import br.com.zupacademy.priscila.proposta.feing.cartao.NovoBloqueioRequest;
-import br.com.zupacademy.priscila.proposta.feing.cartao.NovoCartaoClient;
+import br.com.zupacademy.priscila.proposta.feing.cartao.CartaoClient;
 import br.com.zupacademy.priscila.proposta.proposta.PropostaController;
 import br.com.zupacademy.priscila.proposta.util.ExecutorTransacao;
 import br.com.zupacademy.priscila.proposta.util.exception.ErroPadronizado;
@@ -35,7 +35,7 @@ public class BloqueioController {
     private CartaoRepository repository;
 
     @Autowired
-    private NovoCartaoClient client;
+    private CartaoClient client;
 
     @PostMapping("/{id}")
     public ResponseEntity<?> salvar(@PathVariable Long id,
@@ -45,22 +45,14 @@ public class BloqueioController {
         String userAgent = servletRequest.getHeader("User-Agent");
         String ip = servletRequest.getRemoteAddr();
 
-        NovoBloqueioRequest bloqueioRequest = new NovoBloqueioRequest();
-        bloqueioRequest.setSistemaResponsavel("proposta");
 
         if(cartao.isEmpty()){
             logger.info("Tentativa de bloqueio para um cartão inexistente");
             return ResponseEntity.notFound().build();
         }
 
-        if(cartao.get().bloqueado()){
-            logger.info("O cartão {} já esta bloqueado", cartao.get().getId());
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                    .body(new ErroPadronizado(List.of("Este cartão já está bloqueado")));
-        }
-
         try{
-            client.bloquear(cartao.get().getNumero(), bloqueioRequest);
+            client.bloquear(cartao.get().getNumero(), new NovoBloqueioRequest("proposta"));
             Bloqueio bloqueio = new Bloqueio(ip, userAgent, cartao.get());
 
             cartao.get().setBloqueio(bloqueio);
@@ -69,12 +61,10 @@ public class BloqueioController {
 
             return ResponseEntity.ok().build();
 
-
         }catch (FeignException e){
-
-           logger.info("Não foi possivel fazer o bloqueio do cartao {}, por favor tente mais tarde", cartao.get().getId());
+            logger.info("O cartão {} já esta bloqueado", cartao.get().getId());
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                    .body(new ErroPadronizado(List.of("Não foi possivel fazer o bloqueio, por favor tente novamente mais tarde")));
+                    .body(new ErroPadronizado(List.of("Este cartão já está bloqueado")));
         }
     }
 }
