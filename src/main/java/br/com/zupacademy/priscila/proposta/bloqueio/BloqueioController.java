@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,12 +41,16 @@ public class BloqueioController {
 
     @PostMapping("/{id}")
     public ResponseEntity<?> salvar(@PathVariable Long id,
-                                    HttpServletRequest servletRequest){
+                                    HttpServletRequest servletRequest,
+                                    @AuthenticationPrincipal Jwt usuario){
+        String email = (String) usuario.getClaims().get("email");
+
         Optional<Cartao> cartao = repository.findById(id);
+
+        if(!email.equals(cartao.get().getEmail())) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 
         String userAgent = servletRequest.getHeader("User-Agent");
         String ip = servletRequest.getRemoteAddr();
-
 
         if(cartao.isEmpty()){
             logger.info("Tentativa de bloqueio para um cartão inexistente");
