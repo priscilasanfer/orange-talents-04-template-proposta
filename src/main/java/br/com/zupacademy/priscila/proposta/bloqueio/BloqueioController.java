@@ -2,9 +2,12 @@ package br.com.zupacademy.priscila.proposta.bloqueio;
 
 import br.com.zupacademy.priscila.proposta.cartao.Cartao;
 import br.com.zupacademy.priscila.proposta.cartao.CartaoRepository;
+import br.com.zupacademy.priscila.proposta.feing.cartao.NovoBloqueioRequest;
+import br.com.zupacademy.priscila.proposta.feing.cartao.NovoCartaoClient;
 import br.com.zupacademy.priscila.proposta.proposta.PropostaController;
 import br.com.zupacademy.priscila.proposta.util.ExecutorTransacao;
 import br.com.zupacademy.priscila.proposta.util.exception.ErroPadronizado;
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -32,31 +34,47 @@ public class BloqueioController {
     @Autowired
     private CartaoRepository repository;
 
+    @Autowired
+    private NovoCartaoClient client;
+
     @PostMapping("/{id}")
-    public ResponseEntity<?> salvar(@PathVariable Long id, UriComponentsBuilder uriBuilder, HttpServletRequest request){
-        Optional<Cartao> possivelCartao = repository.findById(id);
+    public ResponseEntity<?> salvar(@PathVariable Long id,
+                                    HttpServletRequest servletRequest){
+        Optional<Cartao> cartao = repository.findById(id);
 
-        String userAgent = request.getHeader("User-Agent");
-        String ip = request.getRemoteAddr();
+        String userAgent = servletRequest.getHeader("User-Agent");
+        String ip = servletRequest.getRemoteAddr();
 
-        if(possivelCartao.isEmpty()){
-            logger.info("Tentativa de bloqueio para cartão inexistente");
+        NovoBloqueioRequest bloqueioRequest = new NovoBloqueioRequest();
+        bloqueioRequest.setSistemaResponsavel("proposta");
+
+        if(cartao.isEmpty()){
+            logger.info("Tentativa de bloqueio para um cartão inexistente");
             return ResponseEntity.notFound().build();
         }
 
-       Cartao cartao = possivelCartao.get();
-
-        if(cartao.bloqueado()){
-            logger.info("O cartão {} já esta bloqueado", cartao.getId());
+        if(cartao.get().bloqueado()){
+            logger.info("O cartão {} já esta bloqueado", cartao.get().getId());
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                     .body(new ErroPadronizado(List.of("Este cartão já está bloqueado")));
         }
 
-        Bloqueio bloqueio = new Bloqueio(ip, userAgent, cartao);
-        cartao.setBloqueio(bloqueio);
+        try{
+            client.bloquear(cartao.get().getNumero(), bloqueioRequest);
+            Bloqueio bloqueio = new Bloqueio(ip, userAgent, cartao.get());
 
-        executor.salvaEComita(cartao);
-        logger.info("O cartão {} foi bloqueado", cartao.getId());
-        return ResponseEntity.ok().build();
+            cartao.get().setBloqueio(bloqueio);
+            executor.atualizaEComita(cartao.get());
+            logger.info("O cartão {} foi bloqueado", cartao.get().getId());
+
+            return ResponseEntity.ok().build();
+
+
+        }catch (FeignException e){
+
+           logger.info("Não foi possivel fazer o bloqueio do cartao {}, por favor tente mais tarde", cartao.get().getId());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .body(new ErroPadronizado(List.of("Não foi possivel fazer o bloqueio, por favor tente novamente mais tarde")));
+        }
     }
 }

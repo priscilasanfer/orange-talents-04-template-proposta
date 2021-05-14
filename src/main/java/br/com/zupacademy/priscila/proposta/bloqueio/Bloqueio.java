@@ -30,10 +30,16 @@ public class Bloqueio {
     @OneToOne(mappedBy = "bloqueio")
     private Cartao cartao;
 
+    @Deprecated
+    public Bloqueio() {}
+
     public Bloqueio(String ip, String userAgente, Cartao cartao) {
         this.ip = ip;
         this.userAgente = userAgente;
         this.cartao = cartao;
     }
 
+    public Long getId() {
+        return id;
+    }
 }

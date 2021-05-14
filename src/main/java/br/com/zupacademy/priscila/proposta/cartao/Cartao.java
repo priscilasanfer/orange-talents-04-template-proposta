@@ -25,7 +25,7 @@ public class Cartao {
     @OneToOne(mappedBy = "cartao")
     private Proposta proposta;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "bloqueio_id", referencedColumnName = "id")
     private Bloqueio bloqueio;
 
@@ -56,4 +56,7 @@ public class Cartao {
         return this.status.equals(StatusCartao.BLOQUEADO);
     }
 
+    public String getNumero() {
+        return numero;
+    }
 }
