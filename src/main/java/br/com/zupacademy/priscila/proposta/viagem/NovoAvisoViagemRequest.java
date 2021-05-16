@@ -14,29 +14,29 @@ public class NovoAvisoViagemRequest {
 
     @Future
     @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
-    private LocalDate termino;
+    private LocalDate validoAte;
 
     @Deprecated
     public NovoAvisoViagemRequest() {
     }
 
     public NovoAvisoViagemRequest(@NotBlank String destino,
-                                  @Future LocalDate termino) {
+                                  @Future LocalDate validoAte) {
         this.destino = destino;
-        this.termino = termino;
+        this.validoAte = validoAte;
     }
 
     public String getDestino() {
         return destino;
     }
 
-    public LocalDate getTermino() {
-        return termino;
+    public LocalDate getValidoAte() {
+        return validoAte;
     }
 
     public AvisoViagem toModel(Cartao cartao, String ip, String userAgent) {
         return new AvisoViagem(this.destino,
-                this.termino,
+                this.validoAte,
                 ip,
                 userAgent,
                 cartao);

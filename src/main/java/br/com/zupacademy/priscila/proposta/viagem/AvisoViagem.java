@@ -23,7 +23,7 @@ public class AvisoViagem {
     private String destino;
 
     @Column(nullable = false)
-    private LocalDate termino;
+    private LocalDate validoAte;
 
     @Column(nullable = false)
     private String ip;
@@ -42,12 +42,12 @@ public class AvisoViagem {
 
     public AvisoViagem(
             String destino,
-            LocalDate termino,
+            LocalDate validoAte,
             String ip,
             String userAgent,
             Cartao cartao) {
         this.destino = destino;
-        this.termino = termino;
+        this.validoAte = validoAte;
         this.ip = ip;
         this.userAgent = userAgent;
         this.cartao = cartao;
@@ -61,8 +61,8 @@ public class AvisoViagem {
         return destino;
     }
 
-    public LocalDate getTermino() {
-        return termino;
+    public LocalDate getValidoAte() {
+        return validoAte;
     }
 
     public String getIp() {
