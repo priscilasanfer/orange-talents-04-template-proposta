@@ -54,7 +54,7 @@ public class CarteiraController {
             return ResponseEntity.notFound().build();
         }
 
-        if(possuiCarteira(request.getCarteira(), cartao.get())){
+        if(possuiCarteira(TipoCarteira.valueOf(request.getCarteira()), cartao.get())){
             logger.info("Carteira já esta associada ao cartão {}", cartao.get().getId());
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                     .body(new ErroPadronizado(List.of("Esta carteira já esta associada ao cartão")));

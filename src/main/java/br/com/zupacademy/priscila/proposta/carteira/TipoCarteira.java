@@ -1,5 +1,6 @@
 package br.com.zupacademy.priscila.proposta.carteira;
 
 public enum TipoCarteira {
-    PAYPAL
+    PAYPAL,
+    SAMSUNGPAY
 }
