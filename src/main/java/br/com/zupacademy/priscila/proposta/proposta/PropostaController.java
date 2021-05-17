@@ -5,6 +5,8 @@ import br.com.zupacademy.priscila.proposta.feing.analise.AnaliseFinanceiraReques
 import br.com.zupacademy.priscila.proposta.util.ExecutorTransacao;
 import br.com.zupacademy.priscila.proposta.util.exception.ErroPadronizado;
 import feign.FeignException;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,9 @@ public class PropostaController {
     @Autowired
     private ApplicationEventPublisher publisher;
 
+    @Autowired
+    private Tracer tracer;
+
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody @Valid NovaPropostaRequest request,
                                     UriComponentsBuilder uriBuilder){
@@ -52,6 +57,13 @@ public class PropostaController {
                     .body(new ErroPadronizado(List.of("Já Existe uma proposta para esse CPF / CNPJ")));
         } else{
             Proposta novaProposta = request.toModel();
+
+            Span activeSpan = tracer.activeSpan();
+            activeSpan.setTag("user.email", novaProposta.getEmail());
+            String userEmail = activeSpan.getBaggageItem(novaProposta.getEmail());
+            activeSpan.setBaggageItem("user.email", userEmail);
+            activeSpan.log("Testando Logs, Baggage e Tags do Jaeger. Log é  desnecessário pois o Spring ja envia automaticamente os logs");
+
             executor.salvaEComita(novaProposta);
             consultaFinanceira(novaProposta);
             executor.atualizaEComita(novaProposta);
