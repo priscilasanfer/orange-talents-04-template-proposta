@@ -1,5 +1,6 @@
 package br.com.zupacademy.priscila.proposta.feing.cartao;
 
+import br.com.zupacademy.priscila.proposta.carteira.NovaCarteiraRequest;
 import br.com.zupacademy.priscila.proposta.viagem.NovoAvisoViagemRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,4 +20,7 @@ public interface CartaoClient {
 
     @RequestMapping(method = RequestMethod.POST, value = "/api/cartoes/{id}/avisos", consumes = "application/json")
     void avisoViagem(@PathVariable("id") String id, @RequestBody NovoAvisoViagemRequest request);
+
+    @RequestMapping(method = RequestMethod.POST, value = "api/cartoes/{id}/carteiras", consumes = "application/json")
+    void associaCarteira(@PathVariable("id") String numeroCartao, @RequestBody NovaCarteiraRequest request);
 }
