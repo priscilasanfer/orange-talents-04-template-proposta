@@ -2,8 +2,10 @@ package br.com.zupacademy.priscila.proposta.cartao;
 
 import br.com.zupacademy.priscila.proposta.bloqueio.Bloqueio;
 import br.com.zupacademy.priscila.proposta.proposta.Proposta;
+import br.com.zupacademy.priscila.proposta.util.criptografia.DadosConverter;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -20,6 +22,7 @@ public class Cartao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Convert(converter = DadosConverter.class)
     private String numero;
 
     @OneToOne(mappedBy = "cartao")

@@ -1,9 +1,11 @@
 package br.com.zupacademy.priscila.proposta.proposta;
 
 import br.com.zupacademy.priscila.proposta.cartao.Cartao;
+import br.com.zupacademy.priscila.proposta.util.criptografia.DadosConverter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -26,6 +28,7 @@ public class Proposta {
     private String codigo;
 
     @Column(nullable = false, unique = true)
+    @Convert(converter = DadosConverter.class)
     private String documento;
 
     @Column(nullable = false)
